@@ -1,6 +1,9 @@
-'use strict';
+import Exponent, {
+  Asset,
+  Components,
+} from 'exponent';
 
-let React = require('react-native');
+let React = require('react');
 
 let {
   Animated,
@@ -9,11 +12,10 @@ let {
   Easing,
   Image,
   ScrollView,
-  StatusBarIOS,
   StyleSheet,
   Text,
   View,
-} = React;
+} = require('react-native');
 
 let STATES = require('./src/constants/index');
 let Initial = require('./src/states/Initial');
@@ -28,21 +30,37 @@ const SHOOTING_HEIGHT = WINDOW_HEIGHT * 0.3;
 
 const STATUS_BAR_HEIGHT = 20;
 
+function cacheImages(images) {
+  return images.map(image => Asset.fromModule(image).downloadAsync());
+}
+
+
 class Stage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isReady: false,
       gameState: STATES.INITIAL,
       score: 0,
       scored: false,
       attempts: 0
     };
   }
+
   stateChanged(gameState) {
     this.setState({
       gameState
     });
   }
+
+  async componentWillMount() {
+    await cacheImages([
+      require('./assets/stage.png'),
+      require('./assets/sprites.png'),
+    ]);
+    this.setState({isReady: true});
+  }
+
   handleAttempt(scored) {
     if (this.state.attempts + 1 > 10) {
       this.setState({
@@ -83,12 +101,14 @@ class Stage extends React.Component {
     }
   }
   render() {
+    if (!this.state.isReady) {
+      return <Components.AppLoading />;
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.ground}/>
-        <Image
-            style={styles.stage}
-            source={{uri: "https://i.imgur.com/6wiJmng.png"}}/>
+        <Image style={styles.stage} source={require('./assets/stage.png')}/>
         {this.renderGameState()}
         <View style={styles.score}>
           <Text style={styles.scoreText}>

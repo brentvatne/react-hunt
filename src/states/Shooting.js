@@ -1,6 +1,6 @@
 'use strict';
 
-let React = require('react-native');
+let React = require('react');
 
 let {
   Animated,
@@ -10,8 +10,9 @@ let {
   Text,
   TouchableOpacity,
   TouchableHighlight,
+  TouchableWithoutFeedback,
   View
-} = React;
+} = require('react-native');
 
 let Duck = require('../sprites/Duck');
 
@@ -33,6 +34,7 @@ class Shooting extends React.Component {
     this.state = {
       pivot: 0,
       duckStatus: "REGULAR",
+      gunFlash: new Animated.Value(0),
       duckReverse: false,
       duckPosition: new Animated.ValueXY({
         x: random(0, SHOOTING_WIDTH),
@@ -121,27 +123,47 @@ class Shooting extends React.Component {
   componentWillUnmount() {
     this.state.duckPosition.removeListener(id);
   }
+
+  _doGunFlash = () => {
+    Animated.sequence([
+      Animated.timing(this.state.gunFlash, {toValue: 1, duration: 50}),
+      Animated.timing(this.state.gunFlash, {toValue: 0, duration: 50}),
+    ]).start();
+  }
+
   render() {
+    let backgroundColor = this.state.gunFlash.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['rgba(255,0,0,0)', 'rgba(255,0,0,0.25)'],
+    });
+
     return (
-      <TouchableHighlight
-        underlayColor="rgba(255,0,0,0.25)"
-        style={styles.container}>
-        <View style={styles.shootingArea}>
-          <Animated.View
-            style={{
-              position: "absolute",
-              transform: [{
-                rotateY: this.state.duckReverse ? "0deg" : "180deg"
-              }],
-              left: this.state.duckPosition.x,
-              top: this.state.duckPosition.y
-            }}>
-            <Duck
-              status={this.state.duckStatus}
-              onKilled={this.duckKilled.bind(this)}/>
-          </Animated.View>
-        </View>
-      </TouchableHighlight>
+      <View style={StyleSheet.absoluteFill}>
+        <TouchableWithoutFeedback
+          onPress={this._doGunFlash}
+          style={styles.container}>
+          <View style={styles.shootingArea}>
+            <Animated.View
+              style={{
+                position: "absolute",
+                transform: [{
+                  rotateY: this.state.duckReverse ? "0deg" : "180deg"
+                }],
+                left: this.state.duckPosition.x,
+                top: this.state.duckPosition.y
+              }}>
+              <Duck
+                status={this.state.duckStatus}
+                onKilled={this.duckKilled.bind(this)}/>
+            </Animated.View>
+          </View>
+        </TouchableWithoutFeedback>
+
+        <Animated.View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, {backgroundColor}]}
+        />
+      </View>
     )
   }
 }

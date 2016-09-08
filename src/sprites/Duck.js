@@ -1,13 +1,13 @@
 'use strict';
 
-let React = require('react-native');
+let React = require('react');
 
 let {
   Image,
   View,
   StyleSheet,
   TouchableWithoutFeedback
-} = React;
+} = require('react-native');
 
 let DUCK_STATE = {
   REGULAR: {
@@ -72,7 +72,7 @@ class Duck extends React.Component {
               top,
               left
             }]}
-            source={{uri: "https://i.imgur.com/RLnV1OJ.png"}}/>
+            source={require('../../assets/sprites.png')}/>
         </View>
       </TouchableWithoutFeedback>
     )

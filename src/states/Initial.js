@@ -1,21 +1,21 @@
 'use strict';
 
-let React = require('react-native');
+let React = require('react');
 
 let {
   StyleSheet,
   Text,
   TouchableOpacity,
   View
-} = React;
+} = require('react-native');
 
 class Initial extends React.Component {
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.text}>REACT HUNT</Text>
-        <TouchableOpacity onPress={this.props.onStateChange.bind(null, "INTRO")}>
-          <Text style={styles.button}>TAP SOME DUCKS!</Text>
+        <TouchableOpacity style={styles.button} onPress={this.props.onStateChange.bind(null, "INTRO")}>
+          <Text style={styles.buttonText}>TAP SOME DUCKS!</Text>
         </TouchableOpacity>
       </View>
     )
@@ -30,16 +30,17 @@ let styles = StyleSheet.create({
     justifyContent: "center"
   },
   button: {
-    top: -50,
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "rgb(60,188,252)",
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#fff",
     padding: 10,
     width: 180,
-    textAlign: "center"
+    top: -50,
+  },
+  buttonText: {
+    color: "rgb(60,188,252)",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   text: {
     fontSize: 60,

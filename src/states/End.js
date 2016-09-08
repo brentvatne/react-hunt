@@ -1,6 +1,6 @@
 'use strict';
 
-let React = require('react-native');
+let React = require('react');
 
 let {
   Animated,
@@ -10,7 +10,7 @@ let {
   Text,
   TouchableOpacity,
   View
-} = React;
+} = require('react-native');
 
 let Dog = require('../sprites/Dog');
 
